@@ -1,21 +1,24 @@
 use EMPRESA
 
 create procedure nuevo_producto
-	(@descripcion varchar(50),
-	@codigo_fabricante int,
-	@precio_costo money)
-	as
-	begin transaction
-/*Inserta nuevo articulo*/
+(
+@descripcion varchar(50),
+@codigo_fabricante int,
+@precio_costo money
+)
+as
+begin transaction
+	/*Inserta nuevo articulo*/
 	insert into producto (descripcion, precio_costo, codigo_fabricante)
 	values(@descripcion, @precio_costo, @codigo_fabricante)
-			if(@@error <> 0) /*@@error me dice si se ejecuto bien o no una instruccion*/ /*todos los doble arroba (@@) son instrucciones propias de sql server*/
-			begin
-				rollback transaction
-				print 'No se pudo agregar el producto'
-				return
-			end
-	commit transaction /*commit confirma transaccion. Rollback la deshace*/
+	
+	if(@@error <> 0) /*@@error me dice si se ejecuto bien o no una instruccion*/ /*todos los doble arroba (@@) son instrucciones propias de sql server*/
+	begin
+		rollback transaction
+		print 'No se pudo agregar el producto'
+		return
+	end
+commit transaction /*commit confirma transaccion. Rollback la deshace*/
 return
 
 select * from producto
@@ -26,7 +29,7 @@ exec nuevo_producto
 	@codigo_fabricante = 2,
 	@precio_costo = 10
 	
-/*Este no anda porque no hay un codigo_fabricante = 36*/
+/*Este no funk porque no hay un codigo_fabricante = 36*/
 exec nuevo_producto
 	@descripcion = 'Mesa redonda',
 	@codigo_fabricante = 36,
@@ -42,32 +45,36 @@ select * from stock
 /*stock procedure cursor*/
 
 Create procedure control_stock
-(@descripcion varchar(50)=NULL)
+(
+	@descripcion varchar(50)=NULL
+)
 as
 declare @pedir as int
+
 if(@descripcion is NULL)
-	begin
-		declare stock cursor for /*los cursores se declaran con los nombres de las tablas y el cursos se llenara con los siguientes datos del select (el cursor son todas las filas)*/
-		select p.descripcion, (s.pto_reposicion - s.cantidad) /*(punto de repocision - cantidad) es lo que hay que reponer*/
-		from producto p join stock s on	p.codigo_producto = s.codigo_producto
-		where (s.pto_reposicion - s.cantidad) > 0 /*donde hay algo que reponer*/
-		order by p.descripcion
-	end
+begin
+	declare stock cursor for /*los cursores se declaran con los nombres de las tablas y el cursos se llenara con los siguientes datos del select (el cursor son todas las filas)*/
+	select p.descripcion, (s.pto_reposicion - s.cantidad) /*(punto de repocision - cantidad) es lo que hay que reponer*/
+	from producto p join stock s on	p.codigo_producto = s.codigo_producto
+	where (s.pto_reposicion - s.cantidad) > 0 /*donde hay algo que reponer*/
+	order by p.descripcion
+end
 else
-	begin
-		print @descripcion
-		declare stock cursor for
-		select p.descripcion, (s.pto_reposicion - s.cantidad)
-		from producto p join stock s on	p.codigo_producto = s.codigo_producto
-		where (s.pto_reposicion - s.cantidad) > 0 
-			and p.descripcion like @descripcion
-	end
+begin
+	print @descripcion
+	declare stock cursor for
+	select p.descripcion, (s.pto_reposicion - s.cantidad)
+	from producto p join stock s on	p.codigo_producto = s.codigo_producto
+	where (s.pto_reposicion - s.cantidad) > 0 
+		and p.descripcion like @descripcion
+end
 
 
 open stock
-fetch next from stock
-into @descripcion, @pedir
-while @@fetch_status = 0/*@@fetch_status sirve para validar el comportamiento de un while*/
+	fetch next from stock
+	into @descripcion, @pedir
+
+	while @@fetch_status = 0/*@@fetch_status sirve para validar el comportamiento de un while*/
 	Begin
 		print rtrim(ltrim(@descripcion)) +','+'pedir:'+ cast(@pedir as char(10))
 		fetch next from stock into @descripcion, @pedir
@@ -76,8 +83,8 @@ close stock
 deallocate stock
 return
 
-/*las siguientes dos lineas ejecutan el cursor de formas distintas*/
-exec control_stock /*@descripcion aca estaria nulo y entra a la parte de if(@descripcion is NULL)*/
+/* las siguientes dos lineas ejecutan el cursor de formas distintas*/
+exec control_stock /*@descripcion aca estaria nulo y entra a la parte de if(@descripcion is NULL) */
 
 exec control_stock @descripcion = '%Linterna%' /*@descripcion aca si tiene valor y entra a la parte del else*/
 
