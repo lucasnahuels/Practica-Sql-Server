@@ -2,9 +2,9 @@ use EMPRESA
 
 create procedure nuevo_producto
 (
-@descripcion varchar(50),
-@codigo_fabricante int,
-@precio_costo money
+	@descripcion varchar(50),
+	@codigo_fabricante int,
+	@precio_costo money
 )
 as
 begin transaction
