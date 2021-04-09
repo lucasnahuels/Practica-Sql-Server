@@ -6,167 +6,155 @@ use EMPRESA
 
 /*INSERTADO*/
 create table empleado
-	    
-	(	codigo_empleado int primary key,
-		apellido char(50)not null,
-		nombre char(50) not null,
-		fecha_nacimiento datetime,
-		codigo_jefe int not null,
-		codigo_oficina int not null,
-		numero_documento char(8)not null,
-		codigo_documento int not null,
-		foreign key (codigo_oficina)
-		references oficina(codigo_oficina)
-		on update cascade on  delete no action,
-		foreign key(codigo_documento)
-		references documento(codigo_documento)
-		on update cascade on  delete no action	
-	);
+(	codigo_empleado int primary key,
+	apellido char(50)not null,
+	nombre char(50) not null,
+	fecha_nacimiento datetime,
+	codigo_jefe int not null,
+	codigo_oficina int not null,
+	numero_documento char(8)not null,
+	codigo_documento int not null,
+	foreign key (codigo_oficina)
+	references oficina(codigo_oficina)
+	on update cascade on  delete no action,
+	foreign key(codigo_documento)
+	references documento(codigo_documento)
+	on update cascade on  delete no action	
+);
 
 /*INSERTADO*/
 create table datos_contrato 
-	     
-	( 	codigo_empleado int primary key,
-		fecha_contrato datetime not null,
-		cuota money not null,
-		ventas money,
-		foreign key(codigo_empleado)
-		references empleado(codigo_empleado)
-		on update cascade on delete no action 
-			
-
-	);
+( 	codigo_empleado int primary key,
+	fecha_contrato datetime not null,
+	cuota money not null,
+	ventas money,
+	foreign key(codigo_empleado)
+	references empleado(codigo_empleado)
+	on update cascade on delete no action 
+);
 
 
 /*INSERTADO*/
 create table documento 
-
-		( codigo_documento int primary key identity(1,1),
-		  descripcion char(50)
-
-	);
+(
+	codigo_documento int primary key identity(1,1),
+	descripcion char(50)
+);
 
 
 /*INSERTADO*/
 create table producto 
-		
-	(	codigo_producto int primary  key identity(1001,1),
-		descripcion char(50),
-		precio_costo money default 0,
-		codigo_fabricante int,
-		foreign key(codigo_fabricante)
-		references fabricante(codigo_fabricante)
-		on update cascade on delete no action
-
-	);
+(	codigo_producto int primary  key identity(1001,1),
+	descripcion char(50),
+	precio_costo money default 0,
+	codigo_fabricante int,
+	foreign key(codigo_fabricante)
+	references fabricante(codigo_fabricante)
+	on update cascade on delete no action
+);
 
 
 /*INSERTADO*/
 create table stock   
-
-	( 	codigo_producto int primary key,
-		cantidad numeric not null default 0,
-		pto_reposicion numeric default 0,
-		foreign key (codigo_producto)
-		references producto(codigo_producto)
-		on update cascade on delete no action			
-
-	);
+( 	
+	codigo_producto int primary key,
+	cantidad numeric not null default 0,
+	pto_reposicion numeric default 0,
+	foreign key (codigo_producto)
+	references producto(codigo_producto)
+	on update cascade on delete no action			
+);
 
 
 /*INSERTADO*/
 create table fabricante
-	
-	 (	 codigo_fabricante int primary key identity(1,1),
-		 razon_social char(50) not null
-
-	);
+ (
+	codigo_fabricante int primary key identity(1,1),
+	 razon_social char(50) not null
+);
 
 
 /*INSERTADO*/
+
 create table precio_venta
-
-	(	codigo_producto int ,
-		codigo_lista int ,
-		precio money not null default 0,
-		primary key(codigo_producto,codigo_lista),
-		foreign key(codigo_producto)
-		references producto(codigo_producto)
-		on update cascade on delete no action,
-		foreign key(codigo_lista)
-		references lista(codigo_lista)
-		on update cascade on delete no action
-
-	);
+(	
+	codigo_producto int ,
+	codigo_lista int ,
+	precio money not null default 0,
+	primary key(codigo_producto,codigo_lista),
+	foreign key(codigo_producto)
+	references producto(codigo_producto)
+	on update cascade on delete no action,
+	foreign key(codigo_lista)
+	references lista(codigo_lista)
+	on update cascade on delete no action
+);
 
 
 /*INSERTADO*/
 create table cliente 
-
-	(	codigo_cliente int primary key identity(1,1),
-		codigo_lista int not null,
-		razon_social char(50) not null,
-		foreign key(codigo_lista)
-		references lista(codigo_lista)
-		on update cascade on delete no action
-	);
+(	
+	codigo_cliente int primary key identity(1,1),
+	codigo_lista int not null,
+	razon_social char(50) not null,
+	foreign key(codigo_lista)
+	references lista(codigo_lista)
+	on update cascade on delete no action
+);
 
 
 /*INSERTADO*/
 create table pedido
+(
+	codigo_pedido int primary key identity(1,1),
+	fecha_pedido datetime not null,
+	codigo_empleado int not null,
+	codigo_cliente int not null,
+	foreign key(codigo_empleado)
+	references empleado(codigo_empleado)
+	on update cascade on delete no action,
+	foreign key(codigo_cliente)
+	references cliente(codigo_cliente)
+	on update cascade on delete no action				  
 
-	(	codigo_pedido int primary key identity(1,1),
-		fecha_pedido datetime not null,
-		codigo_empleado int not null,
-		codigo_cliente int not null,
-		foreign key(codigo_empleado)
-		references empleado(codigo_empleado)
-		on update cascade on delete no action,
-		foreign key(codigo_cliente)
-		references cliente(codigo_cliente)
-		on update cascade on delete no action				  
-
-	);
+);
 
 
 /*INSERTADO*/
 create table  detalle_pedido 
-	
-	(	codigo_pedido int,
-		numero_linea int,
-		codigo_producto int not null,
-		primary key(codigo_pedido,numero_linea),
-		foreign key(codigo_pedido)
-		references pedido(codigo_pedido) 
-		on update cascade on delete no action,
-		foreign key(codigo_producto )
-		references producto(codigo_producto)
-		on update cascade on delete no action
-
-	);
+(	
+	codigo_pedido int,
+	numero_linea int,
+	codigo_producto int not null,
+	primary key(codigo_pedido,numero_linea),
+	foreign key(codigo_pedido)
+	references pedido(codigo_pedido) 
+	on update cascade on delete no action,
+	foreign key(codigo_producto )
+	references producto(codigo_producto)
+	on update cascade on delete no action
+);
 
 
 /*INSERTADO*/
 create table lista
-	
-	(	codigo_lista int primary key identity(1,1),
-		descripcion char(20) not null,
-		ganancia_porcentaje numeric(5,2) not null
-			
-	);
+(	
+	codigo_lista int primary key identity(1,1),
+	descripcion char(20) not null,
+	ganancia_porcentaje numeric(5,2) not null
+);
 
 /*INSERTADO*/
 create table oficina
-
-	(	codigo_oficina int primary key identity(1,1),
-		codigo_director int,
-		descripcion char(50) not null
-			
-	);
+(
+	codigo_oficina int primary key identity(1,1),
+	codigo_director int,
+	descripcion char(50) not null
+);
 
 
 insert into documento(descripcion)values('Documento Nacional de Identidad')
-insert into documento(descripcion)values('Cédula de Identidad')
+insert into documento(descripcion)values('CÃ©dula de Identidad')
 insert into documento(descripcion)values('Pasaporte')
 insert into documento(descripcion)values('Libreta de Enrolamiento')
 
@@ -280,22 +268,22 @@ insert into precio_venta(codigo_producto,codigo_lista)values(1014,1)
 
 select * from precio_venta
 
-insert into cliente(codigo_lista,razon_social)values(1,'Luis garcia Antón')
+insert into cliente(codigo_lista,razon_social)values(1,'Luis garcia AntÃ³n')
 insert into cliente(codigo_lista,razon_social)values(1,'Jaime LLorens')
-insert into cliente(codigo_lista,razon_social)values(1,'El Triángulo')
+insert into cliente(codigo_lista,razon_social)values(1,'El TriÃ¡ngulo')
 insert into cliente(codigo_lista,razon_social)values(1,'Bujes y Pernos')
 insert into cliente(codigo_lista,razon_social)values(1,'Carlos Tena')
 insert into cliente(codigo_lista,razon_social)values(2,'La Manivela')
 insert into cliente(codigo_lista,razon_social)values(2,'Juan Bolto')
 insert into cliente(codigo_lista,razon_social)values(2,'Alvarez Hnos.')
 insert into cliente(codigo_lista,razon_social)values(1,'ORSAN S.A.')
-insert into cliente(codigo_lista,razon_social)values(2,'Cristóbal García')
+insert into cliente(codigo_lista,razon_social)values(2,'CristÃ³bal GarcÃ­a')
 insert into cliente(codigo_lista,razon_social)values(1,'La Fontella')
 insert into cliente(codigo_lista,razon_social)values(1,'Sunshine Ready')
 insert into cliente(codigo_lista,razon_social)values(2,'San Antonio')
 insert into cliente(codigo_lista,razon_social)values(2,'Castelnuovo S.A.')
 insert into cliente(codigo_lista,razon_social)values(1,'BlueMoon')
-insert into cliente(codigo_lista,razon_social)values(1,'Las Cabañas')
+insert into cliente(codigo_lista,razon_social)values(1,'Las CabaÃ±as')
 insert into cliente(codigo_lista,razon_social)values(2,'Electrosur')
 
 select * from cliente
@@ -458,7 +446,7 @@ FROM producto
 
 /*PUNTO 3*/
 
-SELECT apellido Apellido, nombre Nombre, CONVERT(VARCHAR(5),fecha_nacimiento,101) 'Fecha Cumpleaños' , (YEAR(getdate())-YEAR(fecha_nacimiento)) 'Edad' 
+SELECT apellido Apellido, nombre Nombre, CONVERT(VARCHAR(5),fecha_nacimiento,101) 'Fecha CumpleaÃ±os' , (YEAR(getdate())-YEAR(fecha_nacimiento)) 'Edad' 
 FROM empleado
 
 /*PUNTO 4*/
@@ -519,11 +507,11 @@ WHERE p.codigo_empleado = e.codigo_empleado AND p.codigo_cliente = c.codigo_clie
 /*PUNTO 3*/
 CREATE VIEW aux_empleado as SELECT * from empleado
 
-
 Select * from empleado
 
-/*Punto 10*/
-Listar aquellos empleados cuya cuota es menor a 50000 o mayor a 100000
+/*Punto 10
+Listar aquellos empleados cuya cuota es menor a 50000 o mayor a 100000 */
+
 select*from empleado
 SELECT *FROM datos_contrato
 
@@ -554,15 +542,15 @@ SELECT * FROM copia_fabricante;
 
 
 BEGIN transaction;
-DELETE FROM copia_fabricante;
-SELECT * FROM copia_fabricante;
+	DELETE FROM copia_fabricante;
+	SELECT * FROM copia_fabricante;
 ROLLBACK;
 
 SELECT * FROM copia_fabricante;
 
 BEGIN transaction
-DELETE FROM copia_fabricante;
-SELECT * FROM copia_fabricante;
+	DELETE FROM copia_fabricante;
+	SELECT * FROM copia_fabricante;
 COMMIT
 
 SELECT * FROM copia_fabricante;
@@ -579,13 +567,14 @@ SELECT * FROM cuenta
 /*DELETE FROM cuenta*/
 
 BEGIN transaction
-DECLARE @error int
-SET @error = 0 /* SI ES CERO NO HUBO ERROR*/
-UPDATE cuenta SET saldo = (saldo-5000)
-WHERE numero_cuenta=1001
+	DECLARE @error int
+	SET @error = 0 /* SI ES CERO NO HUBO ERROR*/
+	UPDATE cuenta SET saldo = (saldo-5000)
+	WHERE numero_cuenta=1001
+
 IF @@error <> 0 /*HUBO ERROR SI ES DISTINTO DE CERO*/
 BEGIN
-SET @error =1 /*SI HUBO ERROR LE SOY VALOR DE UNO*/
+	SET @error =1 /*SI HUBO ERROR LE SOY VALOR DE UNO*/
 END
 
 /*-----------*/
@@ -594,16 +583,16 @@ WHERE numero_cuenta=1035
 
 IF @@error <>0
 BEGIN
-SET @error =1
+	SET @error =1
 END
 
 IF @error =1
 BEGIN 
-ROLLBACK
+	ROLLBACK
 END
 ELSE 
 BEGIN
-COMMIT
+	COMMIT
 END
 /*-----------------*/
 
@@ -625,17 +614,17 @@ declare cambioclave cursor for
 select codigo_empleado, apellido, nombre FROM empleado
 
 open cambioclave 
+fetch next from cambioclave into @codigo_empleado, @apellido, @nombre
+
+while @@FETCH_STATUS =0 /*@@fetch_status sirve para validar el comportamiento de un while*/
+begin
+	set @clave = @apellido
+	update empleado
+	set clave = @clave
+	where codigo_empleado= @codigo_empleado
+
 	fetch next from cambioclave into @codigo_empleado, @apellido, @nombre
-
-	while @@FETCH_STATUS =0 /*@@fetch_status sirve para validar el comportamiento de un while*/
-		begin
-			set @clave = @apellido
-			update empleado
-			set clave = @clave
-			where codigo_empleado= @codigo_empleado
-
-			fetch next from cambioclave into @codigo_empleado, @apellido, @nombre
-		end 
+end 
 
 close cambioclave
 deallocate cambioclave /*libera espacio de memoria*/
@@ -647,22 +636,32 @@ select * from empleado
 /*FABRICANTES QUE NO TIENEN PRODUCTOS*/
 select  codigo_fabricante from fabricante 
 WHERE codigo_fabricante NOT IN 
-(select codigo_fabricante from producto)
+(
+	select codigo_fabricante from producto
+)
 
 
 delete from fabricante 
-WHERE codigo_fabricante NOT IN 
-(select codigo_fabricante from producto)
+WHERE codigo_fabricante 
+NOT IN 
+(
+	select codigo_fabricante from producto
+)
 
 
 select codigo_producto FROM producto
-where codigo_fabricante IN(6,7)
+where codigo_fabricante IN
+(
+	6,7
+)
 
 select * from fabricante
 
-delete from fabricante /*no se va a poder hacer porque hay una relacion referencial con productos.
-						esto significa que es una base de datos consistente*/
-						
+delete from fabricante 
+/*no se va a poder hacer porque hay una relacion referencial con productos.
+esto significa que es una base de datos consistente*/
+	
+	
 /*punto 5*/
 UPDATE datos_contrato 
 SET cuota =(cuota + cuota*0.05)
