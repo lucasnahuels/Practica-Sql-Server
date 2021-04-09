@@ -6,7 +6,8 @@ use EMPRESA
 
 /*INSERTADO*/
 create table empleado
-(	codigo_empleado int primary key,
+(	
+	codigo_empleado int primary key,
 	apellido char(50)not null,
 	nombre char(50) not null,
 	fecha_nacimiento datetime,
@@ -24,7 +25,8 @@ create table empleado
 
 /*INSERTADO*/
 create table datos_contrato 
-( 	codigo_empleado int primary key,
+( 	
+	codigo_empleado int primary key,
 	fecha_contrato datetime not null,
 	cuota money not null,
 	ventas money,
@@ -44,7 +46,8 @@ create table documento
 
 /*INSERTADO*/
 create table producto 
-(	codigo_producto int primary  key identity(1001,1),
+(	
+	codigo_producto int primary  key identity(1001,1),
 	descripcion char(50),
 	precio_costo money default 0,
 	codigo_fabricante int,
@@ -68,7 +71,7 @@ create table stock
 
 /*INSERTADO*/
 create table fabricante
- (
+(
 	codigo_fabricante int primary key identity(1,1),
 	 razon_social char(50) not null
 );
